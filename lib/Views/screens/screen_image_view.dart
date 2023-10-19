@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 class ScreenImageView extends StatelessWidget {
-
   String url;
   @override
   Widget build(BuildContext context) {
@@ -10,7 +9,10 @@ class ScreenImageView extends StatelessWidget {
         title: Text("Image"),
       ),
       backgroundColor: Colors.black,
-      body: Center(child: Image.network(url)),
+      body: Center(child: InteractiveViewer(
+        maxScale: 3000,
+          minScale: 1,
+          child: Image.network(url))),
     );
   }
 

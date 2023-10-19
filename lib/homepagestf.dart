@@ -39,21 +39,21 @@ class _HomePageState extends State<HomePage> {
       body: Obx(() {
         return homeController.chatsList.isEmpty
             ? Center(
-                child: Text("No chats available"),
-              )
+          child: Text("No chats available"),
+        )
             : ListView.builder(
-                itemCount: homeController.chatsList.length,
-                itemBuilder: (BuildContext context, int index) {
-                  var item = homeController.chatsList[index];
-                  return item.roomType == 'group'
-                      ? getGroupItem(item as RoomInfo, onClick: () {
-                          homeController.setSelectedId(item.id);
-                        })
-                      : getUserItem(item as RoomInfo, onClick: () {
-                          homeController.setSelectedId(item.id);
-                        });
-                },
-              );
+          itemCount: homeController.chatsList.length,
+          itemBuilder: (BuildContext context, int index) {
+            var item = homeController.chatsList[index];
+            return item.roomType == 'group'
+                ? getGroupItem(item as RoomInfo, onClick: () {
+              homeController.setSelectedId(item.id);
+            })
+                : getUserItem(item as RoomInfo, onClick: () {
+              homeController.setSelectedId(item.id);
+            });
+          },
+        );
       }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -95,15 +95,15 @@ class _HomePageState extends State<HomePage> {
             subtitle: item.lastMessage == null
                 ? null
                 : Text(
-                    item.lastMessage!.text,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+              item.lastMessage!.text,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
             onTap: () {
               onClick();
               Get.to(
                 ScreenChat(
-                  receiver: userSnapshot.data!,
+                  receiver: userSnapshot.data!, messages: [],
                 ),
               );
             },
@@ -112,11 +112,11 @@ class _HomePageState extends State<HomePage> {
               width: 40,
               child: Center(
                   child: Text(
-                name[0].toUpperCase(),
-                style: TextStyle(fontSize: 20, color: Colors.white),
-              )),
+                    name[0].toUpperCase(),
+                    style: TextStyle(fontSize: 20, color: Colors.white),
+                  )),
               decoration:
-                  BoxDecoration(shape: BoxShape.circle, color: Colors.pink),
+              BoxDecoration(shape: BoxShape.circle, color: Colors.pink),
             ),
           );
         });
@@ -132,10 +132,10 @@ class _HomePageState extends State<HomePage> {
       subtitle: item.lastMessage == null
           ? null
           : Text(
-              item.lastMessage!.text,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
+        item.lastMessage!.text,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
       onTap: () {
         onClick();
         Get.to(
@@ -147,9 +147,9 @@ class _HomePageState extends State<HomePage> {
         width: 40,
         child: Center(
             child: Text(
-          item.name[0].toUpperCase(),
-          style: TextStyle(fontSize: 20, color: Colors.white),
-        )),
+              item.name[0].toUpperCase(),
+              style: TextStyle(fontSize: 20, color: Colors.white),
+            )),
         decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.pink),
       ),
     );
@@ -210,7 +210,7 @@ class ItemInbox extends StatelessWidget {
         ],
       ),
       onTap: () {
-        Get.to(ScreenChat(receiver: user));
+        Get.to(ScreenChat(receiver: user, messages: [],));
       },
     );
   }

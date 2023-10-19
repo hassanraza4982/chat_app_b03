@@ -74,109 +74,109 @@ class ScreenGroupChat extends StatelessWidget {
 
                       List<MessageModel> messages = data.snapshot.children
                           .map((e) => MessageModel.fromMap(
-                              Map<String, dynamic>.from(e.value as Map)))
+                          Map<String, dynamic>.from(e.value as Map)))
                           .toList();
 
                       return messages.isNotEmpty
                           ? ListView.builder(
-                              itemCount: messages.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                var message = messages[index];
-                                return Align(
-                                  alignment:
-                                      message.sender_id == currentUser!.uid
-                                          ? Alignment.centerRight
-                                          : Alignment.centerLeft,
-                                  child: Container(
-                                    padding: EdgeInsets.only(
-                                        bottom: 5, top: 5, left: 10, right: 5),
-                                    margin: EdgeInsets.only(bottom: 10),
-                                    width: Device.width * .67,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.only(
-                                        topRight: message.sender_id ==
-                                                currentUser!.uid
-                                            ? Radius.circular(0)
-                                            : Radius.circular(20),
-                                        topLeft: message.sender_id ==
-                                                currentUser!.uid
-                                            ? Radius.circular(20)
-                                            : Radius.circular(0),
-                                        bottomLeft: message.sender_id ==
-                                                currentUser!.uid
-                                            ? Radius.circular(0)
-                                            : Radius.circular(20),
-                                        bottomRight: message.sender_id ==
-                                                currentUser!.uid
-                                            ? Radius.circular(20)
-                                            : Radius.circular(0),
-                                      ),
-                                      color: message.sender_id ==
-                                              currentUser!.uid
-                                          ? Colors.greenAccent.withOpacity(.7)
-                                          : Colors.grey.withOpacity(.3),
-                                    ),
-                                    child: ListTile(
-                                      title: message.message_type == 'text'
-                                          ? Linkify(
-                                              text: message.text,
-                                              style: TextStyle(fontSize: 18),
-                                              options: LinkifyOptions(
-                                                  humanize: false),
-                                              linkStyle:
-                                                  TextStyle(color: Colors.red),
-                                              onOpen: (link) {
-                                                launchUrl(Uri.parse(link.url));
-                                              },
-                                            )
-                                          : GestureDetector(
-                                              onTap: () {
-                                                Get.to(ScreenImageView(
-                                                    url: message.text));
-                                              },
-                                              child: Image.network(
-                                                message.text,
-                                              ),
-                                            ),
-                                      subtitle: FutureBuilder(
-                                        future: CachedData.getStudentById(
-                                            message.sender_id),
-                                        builder: (BuildContext context,
-                                            AsyncSnapshot<Student> snapshot) {
-                                          if (snapshot.connectionState ==
-                                              ConnectionState.waiting) {
-                                            return Text("...");
-                                          }
-                                          return Text(message.sender_id ==
-                                                  currentUser!.uid
-                                              ? "You"
-                                              : snapshot.data?.name ?? "");
-                                        },
-                                      ),
-                                      trailing: Container(
-                                        height: double.infinity,
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.end,
-                                          children: [
-                                            Text(
-                                              DateFormat("hh:mm").format(DateTime
-                                                  .fromMillisecondsSinceEpoch(
-                                                      message.timestamp)),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ).paddingOnly(
-                                    left: 15,
-                                    right: 15,
+                        itemCount: messages.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          var message = messages[index];
+                          return Align(
+                            alignment:
+                            message.sender_id == currentUser!.uid
+                                ? Alignment.centerRight
+                                : Alignment.centerLeft,
+                            child: Container(
+                              padding: EdgeInsets.only(
+                                  bottom: 5, top: 5, left: 10, right: 5),
+                              margin: EdgeInsets.only(bottom: 10),
+                              width: Device.width * .67,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.only(
+                                  topRight: message.sender_id ==
+                                      currentUser!.uid
+                                      ? Radius.circular(0)
+                                      : Radius.circular(20),
+                                  topLeft: message.sender_id ==
+                                      currentUser!.uid
+                                      ? Radius.circular(20)
+                                      : Radius.circular(0),
+                                  bottomLeft: message.sender_id ==
+                                      currentUser!.uid
+                                      ? Radius.circular(0)
+                                      : Radius.circular(20),
+                                  bottomRight: message.sender_id ==
+                                      currentUser!.uid
+                                      ? Radius.circular(20)
+                                      : Radius.circular(0),
+                                ),
+                                color: message.sender_id ==
+                                    currentUser!.uid
+                                    ? Colors.greenAccent.withOpacity(.7)
+                                    : Colors.grey.withOpacity(.3),
+                              ),
+                              child: ListTile(
+                                title: message.message_type == 'text'
+                                    ? Linkify(
+                                  text: message.text,
+                                  style: TextStyle(fontSize: 18),
+                                  options: LinkifyOptions(
+                                      humanize: false),
+                                  linkStyle:
+                                  TextStyle(color: Colors.red),
+                                  onOpen: (link) {
+                                    launchUrl(Uri.parse(link.url));
+                                  },
+                                )
+                                    : GestureDetector(
+                                  onTap: () {
+                                    Get.to(ScreenImageView(
+                                        url: message.text));
+                                  },
+                                  child: Image.network(
+                                    message.text,
                                   ),
-                                );
-                              },
-                            )
+                                ),
+                                subtitle: FutureBuilder(
+                                  future: CachedData.getStudentById(
+                                      message.sender_id),
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot<Student> snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return Text("...");
+                                    }
+                                    return Text(message.sender_id ==
+                                        currentUser!.uid
+                                        ? "You"
+                                        : snapshot.data?.name ?? "");
+                                  },
+                                ),
+                                trailing: Container(
+                                  height: double.infinity,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        DateFormat("hh:mm").format(DateTime
+                                            .fromMillisecondsSinceEpoch(
+                                            message.timestamp)),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ).paddingOnly(
+                              left: 15,
+                              right: 15,
+                            ),
+                          );
+                        },
+                      )
                           : Center(
-                              child: Text("No messages"),
-                            );
+                        child: Text("No messages"),
+                      );
                     })),
             Row(
               children: [
@@ -192,7 +192,7 @@ class ScreenGroupChat extends StatelessWidget {
                         IconButton(
                           onPressed: () {
                             chatController.isEmojiVisible.value =
-                                !chatController.isEmojiVisible.value;
+                            !chatController.isEmojiVisible.value;
                             chatController.focusNode.unfocus();
                             chatController.focusNode.canRequestFocus = true;
                           },

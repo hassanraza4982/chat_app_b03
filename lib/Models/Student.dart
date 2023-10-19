@@ -18,18 +18,25 @@ class Student {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          (other is Student &&
-              runtimeType == other.runtimeType &&
-              id == other.id &&
-              email == other.email &&
-              password == other.password &&
-              name == other.name &&
-              age == other.age &&
-              token == other.token &&
-              lastSeen == other.lastSeen);
+      (other is Student &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          email == other.email &&
+          password == other.password &&
+          name == other.name &&
+          age == other.age &&
+          token == other.token &&
+          lastSeen == other.lastSeen);
 
   @override
-  int get hashCode => id.hashCode ^ email.hashCode ^ password.hashCode ^ name.hashCode ^ age.hashCode ^ token.hashCode ^ lastSeen.hashCode;
+  int get hashCode =>
+      id.hashCode ^
+      email.hashCode ^
+      password.hashCode ^
+      name.hashCode ^
+      age.hashCode ^
+      token.hashCode ^
+      lastSeen.hashCode;
 
   @override
   String toString() {
@@ -83,8 +90,8 @@ class Student {
       password: map['password'] as String,
       name: map['name'] as String,
       age: map['age'] as int,
-      token: map['token'] as String? ?? "",
-      lastSeen: map['lastSeen'] as int? ?? 0,
+      token: map['token'] as String,
+      lastSeen: map['lastSeen'] as int,
     );
   }
 

@@ -1,13 +1,17 @@
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:mondaytest/Models/message_model.dart';
 import 'package:mondaytest/Views/screens/screen_image_view.dart';
+import 'package:mondaytest/Views/screens/screen_video_view.dart';
 import 'package:mondaytest/controller/chat_controller.dart';
 import 'package:mondaytest/helper/constants.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:video_player/video_player.dart';
 
 import '../../Models/Student.dart';
 
@@ -16,8 +20,9 @@ class ScreenChat extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ChatController chatController =
-    Get.put(ChatController(receiver_id: receiver.id));
+    ChatController chatController = Get.put(ChatController(
+      receiver_id: receiver.id,
+    ));
 
     return Scaffold(
       appBar: AppBar(
@@ -97,6 +102,9 @@ class ScreenChat extends StatelessWidget {
                                     right: 5),
                                 margin: EdgeInsets.only(bottom: 10),
                                 width: Device.width * .67,
+                                height: message.message_type == 'video'
+                                    ? Get.height * .2
+                                    : null,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.only(
                                     topRight: message.sender_id ==
@@ -118,27 +126,42 @@ class ScreenChat extends StatelessWidget {
                                   ),
                                   color: message.sender_id ==
                                       currentUser!.uid
-                                      ? Colors.greenAccent.withOpacity(.7)
-                                      : Colors.grey.withOpacity(.3),
+                                      ? Colors.green.withOpacity(.5)
+                                      : Colors.orange.withOpacity(.3),
                                 ),
-                                child: ListTile(
-                                  title: message.message_type == 'text'
+                                child: (message.message_type == "video")
+                                    ? VideoItem(message: message)
+                                    : ListTile(
+                                  title: message.message_type ==
+                                      'text'
                                       ? Text(message.text)
-                                      : message.message_type =="voice"?IconButton(onPressed: (){
-                                    chatController.playRecording(message.text);
-                                  }, icon: Icon(Icons.play_arrow)):GestureDetector(
+                                      : message.message_type ==
+                                      "voice"
+                                      ? IconButton(
+                                      onPressed: () {
+                                        chatController
+                                            .playRecording(
+                                            message
+                                                .text);
+                                      },
+                                      icon: Icon(
+                                          Icons.play_arrow))
+                                      : GestureDetector(
                                     onTap: () {
-                                      Get.to(ScreenImageView(
-                                          url: message.text));
+                                      Get.to(
+                                          ScreenImageView(
+                                              url: message
+                                                  .text));
                                     },
                                     child: Image.network(
                                       message.text,
                                     ),
                                   ),
-                                  subtitle: Text(message.sender_id ==
-                                      currentUser!.uid
-                                      ? "You"
-                                      : receiver.name),
+                                  subtitle: Text(
+                                      message.sender_id ==
+                                          currentUser!.uid
+                                          ? "You"
+                                          : receiver.name),
                                   trailing: Column(
                                     mainAxisAlignment:
                                     MainAxisAlignment.end,
@@ -147,9 +170,11 @@ class ScreenChat extends StatelessWidget {
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Text(
-                                        DateFormat("hh:mm").format(DateTime
-                                            .fromMillisecondsSinceEpoch(
-                                            message.timestamp)),
+                                        DateFormat("hh:mm").format(
+                                            DateTime
+                                                .fromMillisecondsSinceEpoch(
+                                                message
+                                                    .timestamp)),
                                       ),
                                     ],
                                   ),
@@ -214,22 +239,35 @@ class ScreenChat extends StatelessWidget {
                             splashColor: Colors
                                 .transparent, // Set splash color to transparent
                           ),
+                          IconButton(
+                            onPressed: () {
+                              chatController.pickVideo(
+                                  receiver, ImageSource.gallery);
+                            },
+                            icon: Icon(Icons.video_library_rounded),
+                            highlightColor: Colors.transparent,
+                            // Set highlight color to transparent
+                            splashColor: Colors
+                                .transparent, // Set splash color to transparent
+                          ),
                         ],
                       ),
                     ),
                   ),
                   Obx(() {
-                    return (chatController.textEditingController.text.isNotEmpty)?FloatingActionButton(
+                    return (chatController
+                        .textEditingController.text.isNotEmpty)
+                        ? FloatingActionButton(
                         highlightElevation: 0,
                         // Set highlight elevation to 0
                         splashColor: Colors.transparent,
                         mini: true,
                         onPressed: () async {
-                          String message =
-                              chatController.textEditingController.value.text;
+                          String message = chatController
+                              .textEditingController.value.text;
                           if (message.isNotEmpty) {
-                            chatController.sendMessage(
-                                chatController.textEditingController.value.text);
+                            chatController.sendMessage(chatController
+                                .textEditingController.value.text);
                           } else {
                             chatController.startRecording();
                           }
@@ -237,9 +275,9 @@ class ScreenChat extends StatelessWidget {
                         child: Icon(
                           Icons.send,
                           size: 22,
-                        )):
-                    chatController.isRecording.value?
-                    FloatingActionButton(
+                        ))
+                        : chatController.isRecording.value
+                        ? FloatingActionButton(
                         highlightElevation: 0,
                         // Set highlight elevation to 0
                         splashColor: Colors.transparent,
@@ -247,15 +285,14 @@ class ScreenChat extends StatelessWidget {
                         onPressed: () async {
                           chatController.stopRecording();
                         },
-                        child: Icon(Icons.stop)):
-                    FloatingActionButton(
+                        child: Icon(Icons.stop))
+                        : FloatingActionButton(
                         highlightElevation: 0,
                         // Set highlight elevation to 0
                         splashColor: Colors.transparent,
                         mini: true,
                         onPressed: () async {
                           chatController.startRecording();
-
                         },
                         child: Icon(Icons.mic));
                   }),
@@ -321,7 +358,7 @@ class ScreenChat extends StatelessWidget {
   }
 
   ScreenChat({
-    required this.receiver,
+    required this.receiver, required List messages,
   });
 
   String formatRelativeTime(int millisecondsSinceEpoch) {
@@ -353,5 +390,119 @@ class ScreenChat extends StatelessWidget {
       final years = (difference.inDays / 365).floor();
       return '$years years ago';
     }
+  }
+}
+
+class VideoItem extends StatelessWidget {
+  const VideoItem({
+    super.key,
+    required this.message,
+  });
+
+  final MessageModel message;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+        onTap: () {
+          Get.to(ScreenVideoViewer(message: message));
+        },
+        child:
+        BlurHash(hash: message.blurHash ?? "L5H2EC=PM+yV0g-mq.wG9c010J}I"));
+  }
+}
+
+class ControllerVideoPlayer extends GetxController {
+  String path;
+  Rx<VideoPlayerController?> videoController = Rx(null);
+
+  @override
+  void onInit() async {
+    videoController.value = await VideoPlayerController.networkUrl(Uri.parse(path));
+    videoController.value?..initialize();
+    super.onInit();
+  }
+
+  @override
+  void dispose() {
+    videoController.value?.dispose();
+    super.dispose();
+  }
+
+  void playOrPause() async {
+    if (videoController.value == null) {
+      return;
+    }
+
+    var playing = videoController.value!.value.isPlaying;
+    if (playing) {
+      videoController.value?.pause();
+    } else {
+      videoController.value?.play();
+    }
+  }
+
+  ControllerVideoPlayer({
+    required this.path,
+  });
+}
+
+class MyVideoPlayer extends StatefulWidget {
+  final String videoUrl;
+
+  MyVideoPlayer({required this.videoUrl});
+
+  @override
+  _MyVideoPlayerState createState() => _MyVideoPlayerState();
+}
+
+class _MyVideoPlayerState extends State<MyVideoPlayer> {
+  late VideoPlayerController _controller;
+  bool _isPlaying = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = VideoPlayerController.network(widget.videoUrl)
+      ..initialize().then((_) {
+        setState(() {});
+      });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _isPlaying = !_isPlaying;
+          if (_isPlaying) {
+            _controller.play();
+          } else {
+            _controller.pause();
+          }
+        });
+      },
+      child: Stack(
+        children: [
+          AspectRatio(
+            aspectRatio: _controller.value.aspectRatio,
+            child: VideoPlayer(_controller),
+          ),
+          if (!_isPlaying)
+            Center(
+              child: Icon(
+                Icons.play_arrow,
+                size: 50,
+              ),
+            ),
+        ],
+      ),
+    );
   }
 }

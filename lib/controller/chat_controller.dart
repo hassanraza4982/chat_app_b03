@@ -1,8 +1,10 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:mondaytest/Views/screens/screen_video_play.dart';
 import 'package:record/record.dart';
 
 import 'package:flutter/material.dart';
@@ -22,6 +24,7 @@ class ChatController extends GetxController {
   var textEditingController = TextEditingController();
   String receiver_id;
   Rx<Student?> receiverObservable = Rx(null);
+  RxString videoPath = "".obs;
 
   @override
   void onInit() {
@@ -41,13 +44,15 @@ class ChatController extends GetxController {
   @override
   void onClose() {
     super.onClose();
-    // audioPlayer.dispose();
-    // audioRecording.dispose();
+    audioPlayer.dispose();
+    audioRecording.dispose();
     textEditingController.dispose();
   }
 
+
   ChatController({
     required this.receiver_id,
+
   });
 
   void startReceiverStream() {
@@ -62,11 +67,11 @@ class ChatController extends GetxController {
     });
   }
 
-  void sendMessage(String text, {String type = 'text'}) async {
+  void sendMessage(String text, {String type = 'text', String? blurhash}) async {
     if (text.isNotEmpty) {
       FCM.sendMessageSingle(
         currentUser!.displayName ?? "New Message",
-        type == 'text' ? text : 'image',
+        type == 'text' ? text : (type == 'image' ? 'image' : 'video'),
         receiverObservable.value?.token ?? "",
         {},
       );
@@ -79,7 +84,8 @@ class ChatController extends GetxController {
           sender_id: currentUser!.uid,
           timestamp: timestamp,
           receiver_id: receiver_id,
-          message_type: type
+          message_type: type,
+          blurHash: blurhash
       );
 
       var roomPath = chatsRef.child(getRoomId(receiver_id, currentUser!.uid));
@@ -109,6 +115,32 @@ class ChatController extends GetxController {
     }
   }
 
+
+
+  Future<void> pickVideo( Student reciever ,ImageSource type) async {
+    final picker = ImagePicker();
+    final pickedVideo = await picker.pickVideo(source: type ).then((value) {
+      log("path :${value!.path.toString()}");
+      Get.to(ScreenVideoPlay(path: value!.path.toString(),receiver: reciever,));
+    });
+    videoPath.value = pickedVideo!.path;
+    // if (pickedVideo != null) {
+    //   // videoController = VideoPlayerController.file(File(pickedVideo.path))
+    //   // ..initialize().then((_){
+    //   // });
+    // }
+
+  }
+
+
+
+
+
+
+
+
+
+
   void updateParticipants() async {
     var id = getRoomId(currentUser!.uid, receiver_id);
     chatsRef.child(id).update({
@@ -118,12 +150,25 @@ class ChatController extends GetxController {
       'roomType': 'chat'
     });
   }
+
+
+
+
+
+
+
+
+  // audio work
+
+
   late AudioPlayer audioPlayer;
   late Record audioRecording;
   RxBool isRecording = false.obs;
   String audioPath = '';
   Timer? recordingTimer;
   int secondsElapsed = 0;
+
+
   Future<void> startRecording() async {
     try {
       if (await audioRecording.hasPermission()) {
@@ -168,4 +213,5 @@ class ChatController extends GetxController {
       print('error in play recording, $e');
     }
   }
+
 }

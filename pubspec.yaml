@@ -58,6 +58,14 @@ dependencies:
   record: ^4.4.4
   audioplayers: ^5.1.0
   audio_waveforms: ^1.0.4
+  video_player: ^2.7.2
+  photo_view: ^0.14.0
+  connectivity_plus: ^5.0.0
+  video_thumbnail: ^0.5.3
+  flutter_img: ^0.1.5+111
+  blurhash_dart: ^1.2.1
+  path_provider: ^2.1.1
+  flutter_blurhash: ^0.7.0
 
 dev_dependencies:
   flutter_test:

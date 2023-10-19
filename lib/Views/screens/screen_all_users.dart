@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mondaytest/Models/Student.dart';
 import 'package:mondaytest/Views/screens/screen_chat.dart';
+import 'package:mondaytest/Views/screens/screen_home.dart';
 import 'package:mondaytest/Views/screens/screen_select_participants.dart';
 import 'package:mondaytest/helper/constants.dart';
 
@@ -63,7 +64,7 @@ class ScreenAllUsers extends StatelessWidget {
                                         child: ElevatedButton(
                                             onPressed: () {
                                               newGroupController.createGroup(nameController.text, selectedStudents).then((value) {
-                                                Get.offAll(HomePage());
+                                                Get.offAll(ScreenHome());
                                               });
                                             },
                                             child: Text("Create")),
@@ -140,7 +141,7 @@ class ScreenAllUsers extends StatelessWidget {
                         decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.pink),
                       ),
                       onTap: () {
-                        Get.to(ScreenChat(receiver: student));
+                        Get.to(ScreenChat(receiver: student, messages: [],));
                       },
                     );
                   },

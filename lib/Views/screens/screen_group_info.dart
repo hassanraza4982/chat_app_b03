@@ -228,7 +228,7 @@ class ScreenGroupInfo extends StatelessWidget {
                                   )
                                 : null,
                             onTap: () {
-                              Get.to(ScreenChat(receiver: student));
+                              Get.to(ScreenChat(receiver: student, messages: [],));
                             },
                           );
                         },

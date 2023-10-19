@@ -12,8 +12,8 @@ import 'package:mondaytest/Views/screens/screen_home.dart';
 import 'package:mondaytest/Views/screens/screen_log_in.dart';
 import 'package:mondaytest/controller/home_controller.dart';
 import 'package:mondaytest/helper/constants.dart';
-import 'package:mondaytest/homepagestf.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'controller/dependency_injection.dart';
 import 'firebase_options.dart';
 
 
@@ -26,6 +26,7 @@ Future<void> main() async {
   );
 
   runApp(MyApp());
+  DependencyInjection.init();
 }
 
 class MyApp extends StatefulWidget {
@@ -35,7 +36,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+  FlutterLocalNotificationsPlugin();
 
   @override
   void initState() {
@@ -106,7 +107,7 @@ class _MyAppState extends State<MyApp> {
       return null;
     }
     var firebaseLinkData =
-        await FirebaseDynamicLinks.instance.getDynamicLink(uri);
+    await FirebaseDynamicLinks.instance.getDynamicLink(uri);
     var path = uri.path;
 
     print("Data: ${firebaseLinkData}");
@@ -233,7 +234,7 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20)
+            borderRadius: BorderRadius.circular(20)
         ),
         isScrollControlled: true,
         backgroundColor: Colors.white,
@@ -247,7 +248,7 @@ class _MyAppState extends State<MyApp> {
     // Get any messages which caused the application to open from
     // a terminated state.
     RemoteMessage? initialMessage =
-        await FirebaseMessaging.instance.getInitialMessage();
+    await FirebaseMessaging.instance.getInitialMessage();
     // If the message also contains a data property with a "type" of "chat",
     // navigate to a chat screen
     if (initialMessage != null) {
@@ -266,17 +267,17 @@ class _MyAppState extends State<MyApp> {
 
   void setupNotificationChannel() async {
     final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-        FlutterLocalNotificationsPlugin();
+    FlutterLocalNotificationsPlugin();
     const settingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+    AndroidInitializationSettings('@mipmap/ic_launcher');
     final settingsIOS = DarwinInitializationSettings(
         onDidReceiveLocalNotification: (id, title, body, payload) =>
-            null /*onSelectNotification(payload)*/);
+        null /*onSelectNotification(payload)*/);
     await flutterLocalNotificationsPlugin.initialize(
         InitializationSettings(android: settingsAndroid, iOS: settingsIOS));
     await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
+        AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel);
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       RemoteNotification? notification = message.notification;
@@ -300,8 +301,8 @@ class _MyAppState extends State<MyApp> {
                     // autoCancel: true,
                     // visibility: NotificationVisibility.public,
                     enableLights: true
-                    // other properties...
-                    ),
+                  // other properties...
+                ),
                 iOS: DarwinNotificationDetails(
                   sound: iOS?.sound?.name,
                   presentAlert: true,
@@ -318,19 +319,19 @@ class _MyAppState extends State<MyApp> {
 
   void initNotificationChannel() async {
     FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-        FlutterLocalNotificationsPlugin();
+    FlutterLocalNotificationsPlugin();
 // initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
     const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+    AndroidInitializationSettings('@mipmap/ic_launcher');
     const DarwinInitializationSettings initializationSettingsIOS =
-        DarwinInitializationSettings();
+    DarwinInitializationSettings();
     const DarwinInitializationSettings initializationSettingsMacOS =
-        DarwinInitializationSettings();
+    DarwinInitializationSettings();
     const InitializationSettings initializationSettings =
-        InitializationSettings(
-            android: initializationSettingsAndroid,
-            iOS: initializationSettingsIOS,
-            macOS: initializationSettingsMacOS);
+    InitializationSettings(
+        android: initializationSettingsAndroid,
+        iOS: initializationSettingsIOS,
+        macOS: initializationSettingsMacOS);
     await flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 
